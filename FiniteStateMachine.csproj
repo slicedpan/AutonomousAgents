@@ -117,6 +117,15 @@
     <Compile Include="Agent.cs" />
     <Compile Include="AgentManager.cs" />
     <Compile Include="Location.cs" />
+    <Compile Include="LocationGrid.cs" />
+    <Compile Include="Locations\Bank.cs" />
+    <Compile Include="Locations\Saloon.cs" />
+    <Compile Include="Locations\OutlawCamp.cs" />
+    <Compile Include="Locations\GoldMine.cs" />
+    <Compile Include="Locations\UnderTakers.cs" />
+    <Compile Include="Locations\SheriffsOffice.cs" />
+    <Compile Include="Locations\Cemetery.cs" />
+    <Compile Include="Locations\Shack.cs" />
     <Compile Include="MinersWifeStates.cs" />
     <Compile Include="MinersWife.cs" />
     <Compile Include="Messages.cs" />
@@ -194,6 +203,7 @@
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

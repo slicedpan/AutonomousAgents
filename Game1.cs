@@ -23,13 +23,23 @@ namespace FiniteStateMachine
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
 
+        public static Texture2D bg;
+
         public static int numCellsX = 25;
         public static int numCellsY = 25;
+        public static LocationGrid grid;
+
+        public static int cellWidth = 32;
+        public static int cellHeight = 32;
+
+        public static int screenWidth = numCellsX * 32;
+        public static int screenHeight = numCellsY * 32;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            grid = new LocationGrid(numCellsX, numCellsY);
         }
 
         /// <summary>
@@ -62,6 +72,11 @@ namespace FiniteStateMachine
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             spriteFont = Content.Load<SpriteFont>("Arial");
+            graphics.PreferredBackBufferHeight = screenHeight;
+            graphics.PreferredBackBufferWidth = screenWidth;
+            graphics.ApplyChanges();
+            bg = Content.Load<Texture2D>("bg");
+            grid.LoadContent(Content);
         }
 
         /// <summary>
@@ -107,7 +122,7 @@ namespace FiniteStateMachine
         protected override void Draw(GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            grid.Draw(spriteBatch);
             Printer.Draw(spriteBatch, spriteFont);
 
             base.Draw(gameTime);
