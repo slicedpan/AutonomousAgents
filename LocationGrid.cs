@@ -31,12 +31,12 @@ namespace FiniteStateMachine
 
         public void AddLocation(Location locationToAdd)
         {
-            int x = rand.Next(25);
-            int y = rand.Next(25);
+            int x = rand.Next(Game1.numCellsX);
+            int y = rand.Next(Game1.numCellsY);
             while (locations[x][y] != null)
             {
-                x = rand.Next(25);
-                y = rand.Next(25);
+                x = rand.Next(Game1.numCellsX);
+                y = rand.Next(Game1.numCellsY);
             }
             locations[x][y] = locationToAdd;
             locationToAdd.X = x;

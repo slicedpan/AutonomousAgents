@@ -19,6 +19,7 @@ namespace FiniteStateMachine
         public static int[] displaytype = new int[max];
         public static int top = 0;
         public static int amount = 0;
+        public static Vector2 offset = new Vector2(0.0f, 0.0f);
 
         public static void Print(int id, string message)
         {
@@ -46,7 +47,7 @@ namespace FiniteStateMachine
             int index = top;
             for (int i = 0; i < amount; i++)
             {
-                spriteBatch.DrawString(spriteFont, display[index], new Vector2(10.0f, 500 - (i * 20)), Color.Black);
+                spriteBatch.DrawString(spriteFont, display[index], offset + new Vector2(0, i * 20), Color.Black);
                 index--;
                 if (index < 0)
                 {

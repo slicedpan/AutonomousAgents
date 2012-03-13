@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FiniteStateMachine
 {
@@ -21,6 +22,13 @@ namespace FiniteStateMachine
         public static void RemoveAgent(Agent agent)
         {
             listOfAgents.Remove(agent);
+        }
+        public static void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (Agent agent in listOfAgents)
+            {
+                agent.Draw(spriteBatch);
+            }
         }
     }
 }

@@ -28,6 +28,16 @@ namespace FiniteStateMachine
             id = agents++;
         }
 
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+
+        }
+
+        public virtual void LoadContent(ContentManager contentManager)
+        {
+
+        }
+
         // Any agent must implement these methods
         abstract public void Update();
         abstract public bool HandleMessage(Telegram telegram);

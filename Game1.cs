@@ -26,14 +26,14 @@ namespace FiniteStateMachine
         public static Texture2D bg;
 
         public static int numCellsX = 25;
-        public static int numCellsY = 25;
+        public static int numCellsY = 15;
         public static LocationGrid grid;
 
         public static int cellWidth = 32;
         public static int cellHeight = 32;
 
-        public static int screenWidth = numCellsX * 32;
-        public static int screenHeight = numCellsY * 32;
+        public static int screenWidth = numCellsX * cellWidth;
+        public static int screenHeight = numCellsY * cellHeight + 200;
 
         public Game1()
         {
@@ -60,7 +60,7 @@ namespace FiniteStateMachine
             AgentManager.AddAgent(Elsa);
             AgentManager.AddAgent(Jesse);
             // TODO: We could add more agents here
-
+            Printer.offset.Y = numCellsY * cellHeight;
             base.Initialize();
         }
 
