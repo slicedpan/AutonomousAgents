@@ -40,6 +40,11 @@ namespace FiniteStateMachine
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             grid = new LocationGrid(numCellsX, numCellsY);
+            grid.AddRandomLocation("mountain", "mountain", 15, 0.2d);
+            grid.AddRandomLocation("plain", "", 1, 1.3d);
+            grid.AddRandomLocation("water", "water", 4, 0.3d);
+            grid.Populate();
+  
         }
 
         /// <summary>
@@ -77,6 +82,7 @@ namespace FiniteStateMachine
             graphics.ApplyChanges();
             bg = Content.Load<Texture2D>("bg");
             grid.LoadContent(Content);
+            AgentManager.LoadContent(Content);
         }
 
         /// <summary>
@@ -123,6 +129,7 @@ namespace FiniteStateMachine
         {
             graphics.GraphicsDevice.Clear(Color.CornflowerBlue);
             grid.Draw(spriteBatch);
+            AgentManager.Draw(spriteBatch);
             Printer.Draw(spriteBatch, spriteFont);
 
             base.Draw(gameTime);

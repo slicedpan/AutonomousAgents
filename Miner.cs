@@ -32,12 +32,7 @@ namespace FiniteStateMachine
         }
 
         // The agent keeps track of its own location
-        private Location location;
-        public Location MinerLocation
-        {
-            get { return location; }
-            set { location = value; }
-        }
+
 
         // It also knows how much gold it's carrying
         private int goldCarrying;
@@ -76,10 +71,12 @@ namespace FiniteStateMachine
         // StateMachine
         public Miner() : base()
         {
+            location = Location.shack;
             stateMachine = new StateMachine<Miner>(this);
             stateMachine.CurrentState = new GoHomeAndSleepTillRested();
             stateMachine.GlobalState = new MinerGlobalState();
             wifeId = this.Id + 1;  // hack hack
+            textureName = "miner";
         }
 
         // This method is invoked by the Game object as a result of XNA updates 

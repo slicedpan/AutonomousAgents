@@ -18,28 +18,20 @@ namespace FiniteStateMachine
         public static Location outlawCamp;
         public static Location sheriffsOffice;
         public static Location undertakers;
-        public static Location goldMine;
-        static Random rand;       
+        public static Location goldMine;      
         static Location()
         {
-            rand = new Random();
-            shack = new Shack(0, 0, "shack");
-            Game1.grid.AddLocation(shack);
-            cemetery = new Cemetery(0, 0, "cemetery");
-            Game1.grid.AddLocation(cemetery);
-            bank = new Bank(0, 0, "bank");
-            Game1.grid.AddLocation(bank);
-            saloon = new Saloon(0, 0, "saloon");
-            Game1.grid.AddLocation(saloon);
-            outlawCamp = new OutlawCamp(0, 0, "outlaw camp");
-            Game1.grid.AddLocation(outlawCamp);
-            sheriffsOffice = new SheriffsOffice(0, 0, "sheriff's office");
-            Game1.grid.AddLocation(sheriffsOffice);
-            undertakers = new UnderTakers(0, 0, "undertakers");
-            Game1.grid.AddLocation(undertakers);
-            goldMine = new GoldMine(0, 0, "gold mine");
-            Game1.grid.AddLocation(goldMine);
+            shack = Game1.grid.AddNamedLocation("shack", "shack");
+            cemetery = Game1.grid.AddNamedLocation("cemetery", "cemetery");
+            bank = Game1.grid.AddNamedLocation("bank", "bank");
+            saloon = Game1.grid.AddNamedLocation("saloon", "saloon");            
+            outlawCamp = Game1.grid.AddNamedLocation("outlawCamp", "outlawcamp");
+            sheriffsOffice = Game1.grid.AddNamedLocation("sheriff's office", "sheriffsoffice");            
+            undertakers = Game1.grid.AddNamedLocation("undertakers", "undertakers");            
+            goldMine = Game1.grid.AddNamedLocation("gold mine", "goldmine");
         }
+
+        public int TravelCost = 0;
 
         private int _X, _Y;
         public int X
@@ -72,29 +64,34 @@ namespace FiniteStateMachine
                 return _description;
             }
         }
+        private String _textureName;
 
-        public Location(int x, int y, String description)
+
+        public Location(String description, String textureName)
         {
-            _X = x;
-            _Y = y;
             _description = description;
+            _textureName = textureName;
         }
-
+        Texture2D _texture;
         public virtual Texture2D Texture
         {
             get
             {
-                return null;
+                return _texture;
             }
         }
 
         public virtual void LoadContent(ContentManager manager)
         {
-
+            if (_textureName == "")
+                return;
+            _texture = manager.Load<Texture2D>(_textureName);
         }
 
         public virtual void Draw(SpriteBatch batch)
         {
+            if (_textureName == "")
+                return;
             batch.Draw(Texture, new Vector2(_X * Game1.cellWidth, _Y * Game1.cellHeight), Color.White);
         }
 

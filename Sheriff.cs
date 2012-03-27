@@ -8,16 +8,14 @@ namespace FiniteStateMachine
     public class Sheriff : Agent
     {
         private StateMachine<Sheriff> stateMachine;
+        public Sheriff()
+        {
+            textureName = "sheriff";
+        }
         public StateMachine<Sheriff> StateMachine
         {
             get { return stateMachine; }
             set { stateMachine = value; }
-        }
-        private Location location;
-        public Location SheriffLocation
-        {
-            get { return location; }
-            set { location = value; }
         }
 
         public override void Update()

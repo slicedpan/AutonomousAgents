@@ -24,13 +24,6 @@ namespace FiniteStateMachine
             set { husbandId = value; }
         }
 
-        private Location location;
-        public Location MinerLocation
-        {
-            get { return location; }
-            set { location = value; }
-        }
-
         private Boolean cooking;
         public Boolean Cooking
         {
@@ -47,6 +40,8 @@ namespace FiniteStateMachine
             stateMachine.CurrentState = new DoHouseWork();
             stateMachine.GlobalState = new WifesGlobalState();
             husbandId = this.Id - 1;  // hack hack
+            textureName = "minerswife";
+            location = Location.shack;
         }
 
         // This method is invoked by the Game object as a result of XNA updates 

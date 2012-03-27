@@ -13,18 +13,19 @@ namespace FiniteStateMachine
         {
             lurkCycles = new Random().Next(5);
 
-            if (agent.OutlawLocation == Location.cemetery)
-                agent.OutlawLocation = Location.outlawCamp;
+            if (agent.Location == Location.cemetery)
+                agent.Location = Location.outlawCamp;
             else
-                agent.OutlawLocation = Location.cemetery;
+                agent.Location = Location.cemetery;
 
             cycleCounter = 0;
-            Printer.Print(agent.Id, "Headin' to the " + agent.OutlawLocation.ToString() + " to hang out for a while");
+            Printer.Print(agent.Id, "Headin' to the " + agent.Location.ToString() + " to hang out for a while");
         }
 
         public override void Execute(Outlaw agent)
         {
-            Printer.Print(agent.Id, "Just lurkin' at the " + agent.OutlawLocation.ToString());
+            Printer.Print(agent.Id, "Just lurkin' at the " + agent.Location.ToString());
+            Printer.Print(agent.Id, String.Format("Coords {0}, {1}", agent.Location.X, agent.Location.Y));
             ++cycleCounter;
             if (cycleCounter > lurkCycles)
             {
@@ -34,7 +35,7 @@ namespace FiniteStateMachine
 
         public override void Exit(Outlaw agent)
         {
-            Printer.Print(agent.Id, "Leavin' the " + agent.OutlawLocation.ToString());
+            Printer.Print(agent.Id, "Leavin' the " + agent.Location.ToString());
         }
 
         public override bool OnMessage(Outlaw agent, Telegram telegram)

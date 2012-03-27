@@ -10,7 +10,7 @@ namespace FiniteStateMachine
         public override void Enter(Miner miner)
         {
             Printer.Print(miner.Id, "Walkin' to the goldmine");
-            miner.MinerLocation = Location.goldMine;
+            miner.Location = Location.goldMine;
         }
 
         public override void Execute(Miner miner)
@@ -45,7 +45,7 @@ namespace FiniteStateMachine
         public override void Enter(Miner miner)
         {
             Printer.Print(miner.Id, "Goin' to the bank. Yes siree");
-            miner.MinerLocation = Location.bank;
+            miner.Location = Location.bank;
         }
 
         public override void Execute(Miner miner)
@@ -81,7 +81,7 @@ namespace FiniteStateMachine
         public override void Enter(Miner miner)
         {
             Printer.Print(miner.Id, "Walkin' Home");
-            miner.MinerLocation = Location.shack;
+            miner.Location = Location.shack;
             Message.DispatchMessage(0, miner.Id, miner.WifeId, MessageType.HiHoneyImHome);
         }
 
@@ -126,10 +126,10 @@ namespace FiniteStateMachine
     {
         public override void Enter(Miner miner)
         {
-            if (miner.MinerLocation != Location.saloon)
+            if (miner.Location != Location.saloon)
             {
                 Printer.Print(miner.Id, "Boy, ah sure is thusty! Walking to the saloon");
-                miner.MinerLocation = Location.saloon;
+                miner.Location = Location.saloon;
             }
         }
 

@@ -13,8 +13,8 @@ namespace FiniteStateMachine
 {
     abstract public class Agent
     {
-        private static int agents = 0; 
-
+        private static int agents = 0;
+        Texture2D _texture;
         // Every agent has a numerical id that is set when it is created
         private int id;
         public int Id
@@ -28,14 +28,31 @@ namespace FiniteStateMachine
             id = agents++;
         }
 
+        protected String textureName = "";
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
+            if (textureName != "")
+                spriteBatch.Draw(_texture, new Vector2(location.X * Game1.cellWidth, location.Y * Game1.cellHeight), Color.White);
         }
 
         public virtual void LoadContent(ContentManager contentManager)
         {
+            if (textureName != "")
+                _texture = contentManager.Load<Texture2D>(textureName);
+        }
 
+        protected Location location;
+        public Location Location
+        {
+            get
+            {
+                return location;
+            }
+            set
+            {
+                location = value;
+            }
         }
 
         // Any agent must implement these methods

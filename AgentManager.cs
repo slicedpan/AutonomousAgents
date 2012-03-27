@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace FiniteStateMachine
 {
@@ -25,9 +26,18 @@ namespace FiniteStateMachine
         }
         public static void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Begin();
             foreach (Agent agent in listOfAgents)
             {
                 agent.Draw(spriteBatch);
+            }
+            spriteBatch.End();
+        }
+        public static void LoadContent(ContentManager content)
+        {
+            foreach (Agent agent in listOfAgents)
+            {
+                agent.LoadContent(content);
             }
         }
     }

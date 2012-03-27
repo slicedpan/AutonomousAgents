@@ -13,18 +13,14 @@ namespace FiniteStateMachine
             get { return money; }
             set { money = value; }
         }
-        private Location location;
-        public Location OutlawLocation
-        {
-            get { return location; }
-            set { location = value; }
-        }
+
         public Outlaw()
         {
             location = Location.outlawCamp;
             stateMachine = new StateMachine<Outlaw>(this);
             stateMachine.CurrentState = new Lurking();
             stateMachine.GlobalState = new GlobalState();
+            textureName = "outlaw";
         }
         private StateMachine<Outlaw> stateMachine;
         public StateMachine<Outlaw> StateMachine
