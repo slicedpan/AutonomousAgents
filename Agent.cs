@@ -17,15 +17,34 @@ namespace FiniteStateMachine
         Texture2D _texture;
         // Every agent has a numerical id that is set when it is created
         private int id;
+        protected double speed = 1.0d; //amount of cells that the agent can pass through in one second unhindered
+
+        public double Speed
+        {
+            get
+            {
+                return speed;
+            }
+        }
+
         public int Id
         {
             get { return id; }
             set { id = value; }
         }
 
-        public Agent()
+        private String name;
+        public String Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+        public Agent(String agentName)
         {
             id = agents++;
+            name = agentName;
         }
 
         protected String textureName = "";
@@ -56,7 +75,15 @@ namespace FiniteStateMachine
         }
 
         // Any agent must implement these methods
-        abstract public void Update();
+        abstract public void Update(GameTime gameTime);
         abstract public bool HandleMessage(Telegram telegram);
+
+        public void SetStateMachine(Object obj)
+        {
+            _stateMachine = obj;
+        }
+
+        public Object _StateMachine { get { return _stateMachine; } }
+        private Object _stateMachine;
     }
 }

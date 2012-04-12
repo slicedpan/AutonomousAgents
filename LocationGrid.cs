@@ -18,6 +18,8 @@ namespace FiniteStateMachine
     {
         private Dictionary<String, Location> namedLocations = new Dictionary<string,Location>();
 
+        private static LocationGrid currentInstance;
+
         public Dictionary<String, Location> NamedLocations
         {
             get
@@ -59,6 +61,7 @@ namespace FiniteStateMachine
             }
             _width = width;
             _height = height;
+            currentInstance = this;
         }
 
         bool randomiserInitialised = false;
@@ -121,6 +124,14 @@ namespace FiniteStateMachine
 
         int _width, _height;
         List<List<Location>> locations;
+
+        public static List<List<Location>> Locations
+        {
+            get
+            {
+                return currentInstance.locations;
+            }
+        }
 
         Random rand = new Random();
 

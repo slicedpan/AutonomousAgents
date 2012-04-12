@@ -77,7 +77,7 @@ namespace FiniteStateMachine
         }
 
         // Attempt to send a message to a particular agent; called by the preceding two methods -- don't call this from your own agents
-        public static void SendMessage(Agent agent, Telegram telegram)
+        private static void SendMessage(Agent agent, Telegram telegram)
         {
             if (!agent.HandleMessage(telegram))
             {

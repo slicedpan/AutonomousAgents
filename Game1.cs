@@ -17,9 +17,6 @@ namespace FiniteStateMachine
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        Miner Bob;
-        MinersWife Elsa;
-        Outlaw Jesse;
         SpriteBatch spriteBatch;
         SpriteFont spriteFont;
 
@@ -55,15 +52,9 @@ namespace FiniteStateMachine
         /// </summary>
         protected override void Initialize()
         {
-            // Here's a little hack: The Miner and MinersWife must know each other's id in
-            // order to communicate.  We calculate them inside each agent based on their
-            // creation order, so the pair must always be created in this sequence.
-            Bob = new Miner();
-            Elsa = new MinersWife();
-            Jesse = new Outlaw();
-            AgentManager.AddAgent(Bob);
-            AgentManager.AddAgent(Elsa);
-            AgentManager.AddAgent(Jesse);
+            AgentManager.AddAgent(new Miner("Bob"));
+            AgentManager.AddAgent(new MinersWife("Elsa"));
+            AgentManager.AddAgent(new Outlaw("Jesse"));
             // TODO: We could add more agents here
             Printer.offset.Y = numCellsY * cellHeight;
             base.Initialize();
@@ -102,22 +93,14 @@ namespace FiniteStateMachine
         /// 
 
         int frameCounter = 0;
-
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
             Message.gameTime = gameTime;
-            if (frameCounter > 180)
-            {
-                Bob.Update();
-                Elsa.Update();
-                Jesse.Update();
-                Message.SendDelayedMessages();
-                frameCounter = 0;
-            }
-            ++frameCounter;
+            Message.SendDelayedMessages();
+            AgentManager.Update(gameTime);
             base.Update(gameTime);
         }
 

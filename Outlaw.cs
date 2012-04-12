@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
@@ -14,13 +15,14 @@ namespace FiniteStateMachine
             set { money = value; }
         }
 
-        public Outlaw()
+        public Outlaw(String name) : base(name)
         {
             location = Location.outlawCamp;
             stateMachine = new StateMachine<Outlaw>(this);
             stateMachine.CurrentState = new Lurking();
-            stateMachine.GlobalState = new GlobalState();
+            stateMachine.GlobalState = new OutlawGlobalState();
             textureName = "outlaw";
+            speed = 4.0d;
         }
         private StateMachine<Outlaw> stateMachine;
         public StateMachine<Outlaw> StateMachine
@@ -29,9 +31,9 @@ namespace FiniteStateMachine
             set { stateMachine = value; }
         }
 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
-            stateMachine.Update();
+ 
         }
 
         public override bool HandleMessage(Telegram telegram)

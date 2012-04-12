@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
@@ -17,11 +18,10 @@ namespace FiniteStateMachine
         }
 
         // This is used to keep track of which other agent is our husband
-        private int husbandId;
-        public int HusbandId
+        private Agent husband;
+        public Agent Husband
         {
-            get { return husbandId; }
-            set { husbandId = value; }
+            get { return husband; }
         }
 
         private Boolean cooking;
@@ -34,20 +34,20 @@ namespace FiniteStateMachine
         // The constructor invokes the base class constructor, which then creates 
         // an id for the new agent object and then creates and initalises the agent's
         // StateMachine
-        public MinersWife() : base()
+        public MinersWife(String name) : base(name)
         {
             stateMachine = new StateMachine<MinersWife>(this);
             stateMachine.CurrentState = new DoHouseWork();
             stateMachine.GlobalState = new WifesGlobalState();
-            husbandId = this.Id - 1;  // hack hack
+            husband = AgentManager.GetAgent("Bob");
             textureName = "minerswife";
             location = Location.shack;
         }
 
         // This method is invoked by the Game object as a result of XNA updates 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
-            stateMachine.Update();
+
         }
 
         // This method is invoked when the agent receives a message

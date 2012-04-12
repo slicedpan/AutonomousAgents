@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
@@ -14,7 +15,7 @@ namespace FiniteStateMachine
             Printer.Print(minersWife.Id, "Time to do some more housework!");
         }
 
-        public override void Execute(MinersWife minersWife)
+        public override void Execute(MinersWife minersWife, GameTime gameTime)
         {
             switch (rand.Next(3))
             {
@@ -30,6 +31,8 @@ namespace FiniteStateMachine
                 default:
                     break;
             }
+            minersWife.StateMachine.Sleep(3.0d);
+
         }
 
         public override void Exit(MinersWife minersWife)
@@ -51,9 +54,10 @@ namespace FiniteStateMachine
             Printer.Print(minersWife.Id, "Walkin' to the can. Need to powda mah pretty li'lle nose");
         }
 
-        public override void Execute(MinersWife minersWife)
+        public override void Execute(MinersWife minersWife, GameTime gameTime)
         {
             Printer.Print(minersWife.Id, "Ahhhhhh! Sweet relief!");
+            minersWife.StateMachine.Sleep(4.0d);
             minersWife.StateMachine.RevertToPreviousState();  // this completes the state blip
         }
 
@@ -82,9 +86,10 @@ namespace FiniteStateMachine
             }
         }
 
-        public override void Execute(MinersWife minersWife)
+        public override void Execute(MinersWife minersWife, GameTime gameTime)
         {
             Printer.Print(minersWife.Id, "Fussin' over food");
+            minersWife.StateMachine.Sleep(4.0d);
         }
 
         public override void Exit(MinersWife minersWife)
@@ -103,7 +108,7 @@ namespace FiniteStateMachine
                     // Tell Miner that the stew is ready now by sending a message with no delay
                     Printer.PrintMessageData("Message handled by " + minersWife.Id + " at time ");
                     Printer.Print(minersWife.Id, "StewReady! Lets eat");
-                    Message.DispatchMessage(0, minersWife.Id, minersWife.HusbandId, MessageType.StewsReady);
+                    Message.DispatchMessage(0, minersWife.Id, minersWife.Husband.Id, MessageType.StewsReady);
                     minersWife.Cooking = false;
                     minersWife.StateMachine.ChangeState(new DoHouseWork());
                     return true;
@@ -123,13 +128,14 @@ namespace FiniteStateMachine
            
         }
 
-        public override void Execute(MinersWife minersWife)
+        public override void Execute(MinersWife minersWife, GameTime gameTime)
         {
             // There's always a 10% chance of a state blip in which MinersWife goes to the bathroom
             if (rand.Next(10) == 1 && !minersWife.StateMachine.IsInState(new VisitBathroom()))
             {
                 minersWife.StateMachine.ChangeState(new VisitBathroom());
             }
+            minersWife.StateMachine.GlobalSleep(2.0d);
         }
 
         public override void Exit(MinersWife minersWife)

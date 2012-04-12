@@ -13,7 +13,7 @@ namespace FiniteStateMachine
 {
     // This class implements normal states, global states and state blips for a given agent.
     // The agent should create its own StateMachine when its constructor is called.
-    public class StateMachine<T>
+    public class StateMachine<T> where T : Agent
     {
         private T owner;
 
@@ -45,19 +45,71 @@ namespace FiniteStateMachine
         public StateMachine(T agent)
         {
             owner = agent;
+            owner.SetStateMachine(this as Object);
+            AgentManager.RegisterCallback(owner.Name, new AgentManager.UpdateCallback(Update));
+            Sleep(1.0d);
+            GlobalSleep(1.0d);
         }
 
-        // This is called by the Agent whenever the Game invokes the Agent's Update() method
-        public void Update()
+        public void Cleanup()
         {
-            if (globalState != null)
+            AgentManager.RemoveCallback(owner.Name);
+        }
+
+        bool changingState = false;
+        State<T> nextState;
+        double nextUpdate = 0.0d;
+        double lastUpdate = 0.0d;
+        double globalNextUpdate = 0.0d;
+        double globalLastUpdate = 0.0d;
+
+        // This is called by the Agent whenever the Game invokes the Agent's Update() method
+        public void Update(GameTime gameTime)
+        {            
+            lastUpdate += gameTime.ElapsedGameTime.TotalSeconds;
+            globalLastUpdate += gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (globalLastUpdate > globalNextUpdate)
             {
-                globalState.Execute(owner);
+                globalLastUpdate = 0.0d;
+                globalNextUpdate = 0.0d;
+                if (globalState != null)
+                {
+                    globalState.Execute(owner, gameTime);
+                }
             }
-            if (currentState != null)
+            if (lastUpdate > nextUpdate)
             {
-                currentState.Execute(owner);
+                if (changingState)
+                {
+                    changingState = false;
+                    previousState = currentState;
+                    currentState.Exit(owner);
+                    currentState = nextState;
+                    currentState.Enter(owner);
+                }
+                else
+                {
+                    nextUpdate = 0.0d;
+                    lastUpdate = 0.0d;
+                    if (currentState != null)
+                    {
+                        currentState.Execute(owner, gameTime);
+                    }                    
+                }
             }
+        }
+
+        public void Sleep(double delayTime)
+        {
+            lastUpdate = 0.0d;
+            nextUpdate = delayTime;
+        }
+
+        public void GlobalSleep(double delayTime)
+        {
+            globalLastUpdate = 0.0d;
+            globalNextUpdate = delayTime;
         }
 
         // This method attempts to deliver a message first via the global state, and if that fails
@@ -85,10 +137,8 @@ namespace FiniteStateMachine
         // Switch to a new state and save the old one, so we can revert to it later if it's a state blip
         public void ChangeState(State<T> newState)
         {
-            previousState = currentState;
-            currentState.Exit(owner);
-            currentState = newState;
-            currentState.Enter(owner);
+            nextState = newState;
+            changingState = true;
         }
 
         // Invoked when a state blip is finished

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
@@ -11,7 +12,7 @@ namespace FiniteStateMachine
     {
         // The following can be tweaked to change the basic behaviour of the Miner
         public int MaxNuggets = 3;
-        public int ThirstLevel = 5;
+        public int ThirstLevel = 25;
         public int ComfortLevel = 5;
         public int TirednessThreshold = 5;
 
@@ -69,7 +70,7 @@ namespace FiniteStateMachine
         // The constructor invokes the base class constructor, which then creates 
         // an id for the new agent object and then creates and initalises the agent's
         // StateMachine
-        public Miner() : base()
+        public Miner(String name) : base(name)
         {
             location = Location.shack;
             stateMachine = new StateMachine<Miner>(this);
@@ -77,13 +78,13 @@ namespace FiniteStateMachine
             stateMachine.GlobalState = new MinerGlobalState();
             wifeId = this.Id + 1;  // hack hack
             textureName = "miner";
+            speed = 4.0d;
         }
 
         // This method is invoked by the Game object as a result of XNA updates 
-        public override void Update()
+        public override void Update(GameTime gameTime)
         {
-            howThirsty += 1;
-            stateMachine.Update();
+            
         }
 
         // This method is invoked when the agent receives a message

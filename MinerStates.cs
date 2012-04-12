@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
@@ -13,18 +14,19 @@ namespace FiniteStateMachine
             miner.Location = Location.goldMine;
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
             miner.GoldCarrying += 1;
             miner.HowFatigued += 1;
             Printer.Print(miner.Id, "Pickin' up a nugget");
+            miner.StateMachine.Sleep(1.0d);
             if (miner.PocketsFull())
             {
-                miner.StateMachine.ChangeState(new VisitBankAndDepositGold());
+                miner.StateMachine.ChangeState(new Moving<Miner>(Location.bank, PathFinderProvider.Get(), new VisitBankAndDepositGold()));
             }
-            if (miner.Thirsty())
+            if (miner.Thirsty() && miner.MoneyInBank > 2)
             {
-                miner.StateMachine.ChangeState(new QuenchThirst());
+                miner.StateMachine.ChangeState(new Moving<Miner>(Location.saloon, PathFinderProvider.Get(), new QuenchThirst()));
             }
         }
 
@@ -48,19 +50,20 @@ namespace FiniteStateMachine
             miner.Location = Location.bank;
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
             miner.MoneyInBank += miner.GoldCarrying;
             miner.GoldCarrying = 0;
             Printer.Print(miner.Id, "Depositing gold. Total savings now: " + miner.MoneyInBank);
+            miner.StateMachine.Sleep(1.0d);
             if (miner.Rich())
             {
                 Printer.Print(miner.Id, "WooHoo! Rich enough for now. Back home to mah li'lle lady");
-                miner.StateMachine.ChangeState(new GoHomeAndSleepTillRested());
+                miner.StateMachine.ChangeState(new Moving<Miner>(Location.shack, PathFinderProvider.Get(), new GoHomeAndSleepTillRested()));
             }
             else
             {
-                miner.StateMachine.ChangeState(new EnterMineAndDigForNugget());
+                miner.StateMachine.ChangeState(new Moving<Miner>(Location.goldMine, PathFinderProvider.Get(), new EnterMineAndDigForNugget()));
             }
         }
 
@@ -81,16 +84,16 @@ namespace FiniteStateMachine
         public override void Enter(Miner miner)
         {
             Printer.Print(miner.Id, "Walkin' Home");
-            miner.Location = Location.shack;
             Message.DispatchMessage(0, miner.Id, miner.WifeId, MessageType.HiHoneyImHome);
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
+            miner.StateMachine.Sleep(1.0d);
             if (miner.HowFatigued < miner.TirednessThreshold)
             {
                 Printer.Print(miner.Id, "All mah fatigue has drained away. Time to find more gold!");
-                miner.StateMachine.ChangeState(new EnterMineAndDigForNugget());
+                miner.StateMachine.ChangeState(new Moving<Miner>(Location.goldMine, PathFinderProvider.Get(), new EnterMineAndDigForNugget()));
             }
             else
             {
@@ -126,20 +129,17 @@ namespace FiniteStateMachine
     {
         public override void Enter(Miner miner)
         {
-            if (miner.Location != Location.saloon)
-            {
-                Printer.Print(miner.Id, "Boy, ah sure is thusty! Walking to the saloon");
-                miner.Location = Location.saloon;
-            }
+            
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
             // Buying whiskey costs 2 gold but quenches thirst altogether
+            miner.StateMachine.Sleep(2.0d);
             miner.HowThirsty = 0;
             miner.MoneyInBank -= 2;
             Printer.Print(miner.Id, "That's mighty fine sippin' liquer");
-            miner.StateMachine.ChangeState(new EnterMineAndDigForNugget());
+            miner.StateMachine.ChangeState(new Moving<Miner>(Location.goldMine, PathFinderProvider.Get(), new EnterMineAndDigForNugget()));
         }
 
         public override void Exit(Miner miner)
@@ -161,8 +161,9 @@ namespace FiniteStateMachine
             Printer.Print(miner.Id, "Smells Reaaal goood Elsa!");
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
+            miner.StateMachine.Sleep(1.0d);
             Printer.Print(miner.Id, "Tastes real good too!");
             miner.StateMachine.RevertToPreviousState();
         }
@@ -186,9 +187,10 @@ namespace FiniteStateMachine
 
         }
 
-        public override void Execute(Miner miner)
+        public override void Execute(Miner miner, GameTime gameTime)
         {
-
+            miner.StateMachine.GlobalSleep(1.0d);
+            miner.HowThirsty += 1;
         }
         
         public override void Exit(Miner miner)
