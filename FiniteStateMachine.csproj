@@ -116,6 +116,8 @@
   <ItemGroup>
     <Compile Include="Agent.cs" />
     <Compile Include="AgentManager.cs" />
+    <Compile Include="AStar.cs" />
+    <Compile Include="AStarFunctions.cs" />
     <Compile Include="IPathFinder.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="LocationGrid.cs" />
@@ -127,7 +129,8 @@
     <Compile Include="MinerStates.cs" />
     <Compile Include="Outlaw.cs" />
     <Compile Include="OutlawStates.cs" />
-    <Compile Include="PathFinder.cs" />
+    <Compile Include="PathDrawer.cs" />
+    <Compile Include="PathFinderProvider.cs" />
     <Compile Include="Printer.cs" />
     <Compile Include="Sheriff.cs" />
     <Compile Include="SheriffStates.cs" />

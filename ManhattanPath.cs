@@ -7,7 +7,7 @@ namespace FiniteStateMachine
 {
     public class ManhattanPath : IPathFinder<Location>
     {
-        public List<Location> GetPath(Location start, Location end, List<List<Location>> grid)
+        public List<Location> GetPath(Location start, Location end, I2DGraph<Location> grid)
         {
             List<Location> path = new List<Location>();
             int startX = start.X;
@@ -26,12 +26,12 @@ namespace FiniteStateMachine
             while (currentX != end.X)
             {
                 currentX += xOffset;
-                path.Add(grid[currentX][currentY]);                
+                path.Add(grid.GetNode(currentX, currentY));                
             }
             while (currentY != end.Y)
             {
                 currentY += yOffset;
-                path.Add(grid[currentX][currentY]);
+                path.Add(grid.GetNode(currentX, currentY));
             }
             return path;
         }

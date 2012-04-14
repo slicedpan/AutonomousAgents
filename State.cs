@@ -55,6 +55,7 @@ namespace FiniteStateMachine
                 return;
             }                
             path = pathFinder.GetPath(agent.Location, destination, LocationGrid.Locations);
+            Game1.pathDrawer.AddPath(path);
             currentPathPos = 0;
             gridTime = 0.0d;
         }
@@ -73,6 +74,7 @@ namespace FiniteStateMachine
                     {
                         stateMachine.ChangeState(destinationState);
                     }
+                    Game1.pathDrawer.RemovePath(path);
                 }
                 else
                     agent.Location = path[currentPathPos];

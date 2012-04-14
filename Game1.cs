@@ -26,6 +26,8 @@ namespace FiniteStateMachine
         public static int numCellsY = 15;
         public static LocationGrid grid;
 
+        public static PathDrawer pathDrawer;
+
         public static int cellWidth = 32;
         public static int cellHeight = 32;
 
@@ -74,6 +76,8 @@ namespace FiniteStateMachine
             bg = Content.Load<Texture2D>("bg");
             grid.LoadContent(Content);
             AgentManager.LoadContent(Content);
+            pathDrawer = new PathDrawer();
+            pathDrawer.LoadContent(Content);
         }
 
         /// <summary>
@@ -114,7 +118,7 @@ namespace FiniteStateMachine
             grid.Draw(spriteBatch);
             AgentManager.Draw(spriteBatch);
             Printer.Draw(spriteBatch, spriteFont);
-
+            pathDrawer.DrawPaths(spriteBatch);
             base.Draw(gameTime);
         }
     }
