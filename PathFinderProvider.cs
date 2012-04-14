@@ -7,7 +7,8 @@ namespace FiniteStateMachine
 {
     public class PathFinderProvider
     {
-        static IPathFinder<Location> current = new ManhattanPath();
+        static LocationEuclideanHeuristic h = new LocationEuclideanHeuristic();
+        static IPathFinder<Location> current = new AStar<Location>(h, h, new LocationIDGen());
         public static IPathFinder<Location> Get()
         {
             return current;

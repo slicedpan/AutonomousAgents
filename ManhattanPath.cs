@@ -7,32 +7,42 @@ namespace FiniteStateMachine
 {
     public class ManhattanPath : IPathFinder<Location>
     {
-        public List<Location> GetPath(Location start, Location end, I2DGraph<Location> grid)
+        IHeuristic<Location> heuristic;
+        public ManhattanPath()
+        {
+            this.heuristic = new LocationEuclideanHeuristic();
+        }
+        public List<Location> GetPath(Location start, Location end, IGraph<Location> grid)
         {
             List<Location> path = new List<Location>();
-            int startX = start.X;
-            int xOffset = 1, yOffset = 1;
-
-            if (start.X > end.X)
-                xOffset = -1;
-            if (start.Y > end.Y)
-                yOffset = -1;
-
-            int currentX = start.X;
-            int currentY = start.Y;
 
             path.Add(start);
 
-            while (currentX != end.X)
+            Location current = start;
+
+            int steps = 0;
+
+            while (steps < 100)
             {
-                currentX += xOffset;
-                path.Add(grid.GetNode(currentX, currentY));                
+                List<Location> locations = grid.GetNeighbours(current);
+                float minimum = float.MaxValue;
+                Location currentBest = null;
+                for (int i = 0; i < locations.Count; ++i)
+                {
+                    float estimate = heuristic.GetEstimate(end, locations[i]);
+                    if (estimate < minimum)
+                    {
+                        currentBest = locations[i];
+                        minimum = estimate;
+                    }
+                }
+                current = currentBest;
+                path.Add(current);
+                ++steps;
+                if (current == end)
+                    break;
             }
-            while (currentY != end.Y)
-            {
-                currentY += yOffset;
-                path.Add(grid.GetNode(currentX, currentY));
-            }
+
             return path;
         }
     }

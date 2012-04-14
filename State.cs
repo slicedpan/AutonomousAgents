@@ -54,7 +54,7 @@ namespace FiniteStateMachine
                 }
                 return;
             }                
-            path = pathFinder.GetPath(agent.Location, destination, LocationGrid.Locations);
+            path = pathFinder.GetPath(agent.Location, destination, Game1.grid);
             Game1.pathDrawer.AddPath(path);
             currentPathPos = 0;
             gridTime = 0.0d;
@@ -63,7 +63,7 @@ namespace FiniteStateMachine
         public override void Execute(T agent, GameTime gameTime)
         {
             gridTime += gameTime.ElapsedGameTime.TotalSeconds;
-            if (gridTime > 1.0d / agent.Speed)
+            if (gridTime > (1.0d * agent.Location.TravelCost) / agent.Speed)
             {
                 gridTime = 0.0d;
                 ++currentPathPos;
@@ -74,7 +74,6 @@ namespace FiniteStateMachine
                     {
                         stateMachine.ChangeState(destinationState);
                     }
-                    Game1.pathDrawer.RemovePath(path);
                 }
                 else
                     agent.Location = path[currentPathPos];
@@ -83,6 +82,7 @@ namespace FiniteStateMachine
 
         public override void Exit(T agent)
         {
+            Game1.pathDrawer.RemovePath(path);
             Printer.Print(agent.Id, "Arrived at " + destination.Description);
         }
 

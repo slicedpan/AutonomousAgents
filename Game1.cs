@@ -96,7 +96,6 @@ namespace FiniteStateMachine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         /// 
 
-        int frameCounter = 0;
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit

@@ -5,13 +5,12 @@ using System.Text;
 
 namespace FiniteStateMachine
 {
-    public interface I2DGraph<T>
+    public interface IGraph<T>
     {
         List<T> GetNeighbours(T node);
-        T GetNode(int x, int y);
     }
     public interface IPathFinder<T>
     {
-        List<T> GetPath(T start, T end, I2DGraph<T> grid);       
+        List<T> GetPath(T start, T end, IGraph<T> grid);       
     }
 }

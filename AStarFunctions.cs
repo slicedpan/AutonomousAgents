@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
-    public class LocationDistanceHeuristic : IHeuristic<Location>, IMovementCost<Location>
+    public class LocationEuclideanHeuristic : IHeuristic<Location>, IMovementCost<Location>
     {
         public float GetEstimate(Location current, Location end)
         {
@@ -24,23 +24,21 @@ namespace FiniteStateMachine
 
         public float GetEstimate(Location current, Location end)
         {
-            return Math.Abs((float)(current.X - end.X + current.Y - end.Y));
+            return (float)(Math.Abs(current.X - end.X) + Math.Abs(current.Y - end.Y));
         }
 
-        float GetMovementCost(Location first, Location second)
+        public float GetMovementCost(Location first, Location second)
         {
             return GetEstimate(first, second) * (first.TravelCost + second.TravelCost);
         }
+
     }
 
-    public class LocationNodeComparer : IComparer<AStarNode<Location>>
+    public class LocationIDGen : IUIDGenerator<Location>
     {
-        public int Compare(AStarNode<Location> x, AStarNode<Location> y)
+        public uint GenerateID(Location value)
         {
-            if (x.FValue < y.FValue)
-                return -1;
-            else
-                return 1;
+            return (uint)(value.Y * Game1.numCellsX + value.X);
         }
     }
 

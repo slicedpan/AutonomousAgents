@@ -14,7 +14,7 @@ namespace FiniteStateMachine
         public int travelCost = 0;
         public double frequency = 0.0d;
     }
-    public class LocationGrid
+    public class LocationGrid : IGraph<Location>
     {
         private Dictionary<String, Location> namedLocations = new Dictionary<string,Location>();
 
@@ -174,6 +174,20 @@ namespace FiniteStateMachine
                 }
             }
             batch.End();
+        }
+
+        public List<Location> GetNeighbours(Location node)  //TODO cache the results for each location
+        {
+            List<Location> retList = new List<Location>(); 
+            if (node.X > 0)            
+                retList.Add(locations[node.X - 1][node.Y]);            
+            if (node.X < _width - 1)            
+                retList.Add(locations[node.X + 1][node.Y]);            
+            if (node.Y > 0)
+                retList.Add(locations[node.X][node.Y - 1]);
+            if (node.Y < _height - 1)
+                retList.Add(locations[node.X][node.Y + 1]);
+            return retList;
         }
     }
 }
