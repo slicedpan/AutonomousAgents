@@ -20,7 +20,6 @@ namespace FiniteStateMachine
         public static int top = 0;
         public static int amount = 0;
         public static Vector2 offset = new Vector2(0.0f, 0.0f);
-        static int lastColour = 0;
         static Color[] colours = new Color[8]
             {
                 Color.White,

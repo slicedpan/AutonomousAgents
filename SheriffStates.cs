@@ -86,7 +86,7 @@ namespace FiniteStateMachine
         public void Enter(Sheriff agent)
         {
             Printer.Print(agent, "Howdy Mort, Got a dead one up at the " + corpseLocation.Description);
-            //Message.DispatchMessage(0.0d, agent.Id, AgentManager.GetAgent("Mort").Id, MessageType.CorpseLocation, corpseLocation);
+            Message.DispatchMessage(0.0d, agent.Id, AgentManager.GetAgent("Mort").Id, MessageType.CorpseLocation, corpseLocation);
             agent.StateMachine.Sleep(1.0d);
         }
 
@@ -148,7 +148,7 @@ namespace FiniteStateMachine
                 visitedUndertaker = true;
                 return;
             }
-            agent.StateMachine.ChangeState(new DrinkInSaloon());
+            agent.StateMachine.ChangeState(new PatrolMove(Location.saloon, PathFinderProvider.Get(), new DrinkInSaloon()));
         }
 
         public void Exit(Sheriff agent)
@@ -208,12 +208,14 @@ namespace FiniteStateMachine
             if (rand.Next(10) >= 3)
             {
                 Message.DispatchMessage(0.0d, agent.Id, other.Id, MessageType.KillMessage);
-                agent.StateMachine.ChangeState(new Cleanup(other));                
+                agent.StateMachine.ChangeState(new Cleanup(other));
+                other.Location.Corpses += 1;
             }
             else
             {
                 Message.DispatchMessage(0.0d, agent.Id, other.Id, MessageType.FightOver);
                 agent.StateMachine.ChangeState(new SheriffDead());
+                agent.Location.Corpses += 1;
             }
         }
 
@@ -250,10 +252,11 @@ namespace FiniteStateMachine
         }
 
         public bool OnMessage(Sheriff agent, Telegram telegram)
-        {
-            return true;
+        {            
+            return false;
         }
     }
+
     public class SheriffGlobalState : State<Sheriff>
     {
 
@@ -272,7 +275,12 @@ namespace FiniteStateMachine
 
         public bool OnMessage(Sheriff agent, Telegram telegram)
         {
-            return false;
+            if (telegram.messageType == MessageType.BankRobbery)
+            {
+                Printer.Print(agent, "Someone's robbin' the bank! I'm on my way");
+                agent.StateMachine.ChangeState(new PatrolMove(Location.bank, PathFinderProvider.Get(), new Patrolling()));
+            }
+            return true;
         }
     }
 }

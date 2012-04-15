@@ -8,6 +8,14 @@ using Microsoft.Xna.Framework;
 namespace FiniteStateMachine
 {
 
+    public class LocationSightCost : IMovementCost<Location>
+    {    
+        public float GetMovementCost(Location first, Location second)
+        {
+ 	        throw new NotImplementedException();
+        }
+    }
+
     public class LocationComparer : IComparer<Location>
     {
         public int Compare(Location x, Location y)
@@ -111,6 +119,8 @@ namespace FiniteStateMachine
                 sensingRequiresUpdate = false;
             }
         }
+
+        static IPathFinder<Location> sightPropagator = new AStar<Location>(
 
         static bool CanSense(Agent agent, Agent other)
         {

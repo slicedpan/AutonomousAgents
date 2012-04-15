@@ -22,6 +22,8 @@ namespace FiniteStateMachine
 
         Rectangle spriteRect;
 
+        Texture2D crossImg;
+
         public Dictionary<String, Location> NamedLocations
         {
             get
@@ -163,6 +165,7 @@ namespace FiniteStateMachine
                         locations[i][j].LoadContent(manager);
                 }
             }
+            crossImg = manager.Load<Texture2D>("cross");
         }
 
         public void Draw(SpriteBatch batch)
@@ -177,6 +180,8 @@ namespace FiniteStateMachine
                     batch.Draw(Game1.bg, spriteRect, Color.White);
                     if (locations[i][j] != null)
                         locations[i][j].Draw(batch, spriteRect);
+                    if (locations[i][j].Corpses > 0)
+                        batch.Draw(crossImg, spriteRect, Color.White);
                 }
             }
             batch.End();

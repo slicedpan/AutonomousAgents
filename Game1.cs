@@ -22,14 +22,14 @@ namespace FiniteStateMachine
 
         public static Texture2D bg;
 
-        public static int numCellsX = 50;
-        public static int numCellsY = 30;
+        public static int numCellsX = 30;
+        public static int numCellsY = 20;
         public static LocationGrid grid;
 
         public static PathDrawer pathDrawer;
 
-        public static int cellWidth = 16;
-        public static int cellHeight = 16;
+        public static int cellWidth = 32;
+        public static int cellHeight = 32;
 
         public static int screenWidth = numCellsX * cellWidth;
         public static int screenHeight = numCellsY * cellHeight + 200;
@@ -58,6 +58,7 @@ namespace FiniteStateMachine
             AgentManager.AddAgent(new MinersWife("Elsa"));
             AgentManager.AddAgent(new Outlaw("Jesse"));
             AgentManager.AddAgent(new Sheriff("Wyatt"));
+            AgentManager.AddAgent(new Undertaker("Mort"));
             // TODO: We could add more agents here
             Printer.offset.Y = numCellsY * cellHeight;
             base.Initialize();

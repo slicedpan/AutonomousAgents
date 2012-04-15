@@ -139,6 +139,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Undertaker.cs" />
+    <Compile Include="UndertakerStates.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

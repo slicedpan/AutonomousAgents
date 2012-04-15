@@ -20,7 +20,8 @@ namespace FiniteStateMachine
         Howdy,
         KillMessage,
         FightOver,
-        CorpseLocation
+        CorpseLocation,
+        BankRobbery
     }
 
     // Telegrams are the messages that are sent between agents -- don't create these yourself, just call DispatchMessage()
@@ -58,14 +59,14 @@ namespace FiniteStateMachine
                 telegram.extraInfo = extra;
             if (delay <= 0.0f)
             {
-                Printer.PrintMessageData("Instant telegram dispatched by " + sender + " for " + receiver + " message is " + MessageToString(messageType));
+                //Printer.PrintMessageData("Instant telegram dispatched by " + sender + " for " + receiver + " message is " + messageType.ToString());
                 SendMessage(receivingAgent, telegram);
             }
             else
             {
                 telegram.DispatchTime = (int)gameTime.TotalGameTime.Ticks + delay;
                 telegramQueue.Add(telegram);
-                Printer.PrintMessageData("Delayed telegram from " + sender + " recorded at time " + gameTime.TotalGameTime.Ticks);
+                //Printer.PrintMessageData("Delayed telegram from " + sender + " recorded at time " + gameTime.TotalGameTime.Ticks);
             }
         }
 
@@ -88,21 +89,7 @@ namespace FiniteStateMachine
         {
             if (!agent.HandleMessage(telegram))
             {
-                Printer.PrintMessageData("Message not handled");
-            }
-        }
-
-        // Converts a message to string format
-        public static String MessageToString(MessageType messageType)
-        {
-            switch (messageType)
-            {
-                case MessageType.HiHoneyImHome:
-                    return "Hi Honey I'm Home";
-                case MessageType.StewsReady:
-                    return "Stew's Ready";
-                default:
-                    return "Not recognized";
+                Printer.PrintMessageData("Message: " + telegram.messageType.ToString() + " not handled");                
             }
         }
     }

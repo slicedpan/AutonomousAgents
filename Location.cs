@@ -33,6 +33,15 @@ namespace FiniteStateMachine
 
         public int TravelCost = 0;
 
+        protected int sightAttenuation = 0;
+        public int SightAttenuation
+        {
+            get
+            {
+                return sightAttenuation;
+            }
+        }
+
         private int _X, _Y;
         public int X
         {
@@ -80,6 +89,8 @@ namespace FiniteStateMachine
                 return _texture;
             }
         }
+
+        public int Corpses = 0;
 
         public virtual void LoadContent(ContentManager manager)
         {

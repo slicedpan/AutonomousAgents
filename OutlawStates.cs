@@ -39,6 +39,7 @@ namespace FiniteStateMachine
         public void Enter(Outlaw agent)
         {
             Printer.Print(agent, "Headin' over to the bank to steal some gold!");
+            Message.DispatchMessage(0.0d, agent.Id, AgentManager.GetAgent("Wyatt").Id, MessageType.BankRobbery);
         }
 
         public void Execute(Outlaw agent, GameTime gameTime)
@@ -58,49 +59,25 @@ namespace FiniteStateMachine
         {
             return false;    
         }
-    }
-
-    class Resurrect : State<Outlaw>
-    {
-
-        public void Enter(Outlaw agent)
-        {
-            Printer.Print(agent, "Resurrecting");
-        }
-
-        public void Execute(Outlaw agent, GameTime gameTime)
-        {
-            agent.Location = Location.outlawCamp;
-            agent.Money = 0;
-            agent.StateMachine.ChangeState(new Lurking());            
-        }
-
-        public void Exit(Outlaw agent)
-        {
-            
-        }
-
-        public bool OnMessage(Outlaw agent, Telegram telegram)
-        {
-            return true;
-        }
-    }
+    }    
 
     class OutlawDead: State<Outlaw>
     {
         public void Enter(Outlaw agent)
         {
+            agent.Alive = false;
         }
 
         public void Execute(Outlaw agent, GameTime gameTime)
         {
-            agent.StateMachine.Sleep(20.0d);                        
-            agent.StateMachine.ChangeState(new Resurrect());
+            agent.StateMachine.Sleep(40.0d);
+            agent.Location = Location.outlawCamp;          
+            agent.StateMachine.ChangeState(new Lurking());
         }
 
         public void Exit(Outlaw agent)
         {
-
+            agent.Alive = true;
         }
 
         public bool OnMessage(Outlaw agent, Telegram telegram)
