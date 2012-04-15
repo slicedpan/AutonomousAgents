@@ -20,6 +20,8 @@ namespace FiniteStateMachine
 
         private static LocationGrid currentInstance;
 
+        Rectangle spriteRect;
+
         public Dictionary<String, Location> NamedLocations
         {
             get
@@ -33,6 +35,7 @@ namespace FiniteStateMachine
         public Location AddNamedLocation(String name, String texture)
         {
             Location location = new Location(name, texture);
+            location.TravelCost = 1;
             namedLocations.Add(name, location);
             AddLocation(location);
             return location;
@@ -62,6 +65,7 @@ namespace FiniteStateMachine
             _width = width;
             _height = height;
             currentInstance = this;
+            spriteRect = new Rectangle(0, 0, Game1.cellWidth, Game1.cellHeight);
         }
 
         bool randomiserInitialised = false;
@@ -168,9 +172,11 @@ namespace FiniteStateMachine
             {
                 for (int j = 0; j < locations[i].Count; ++j)
                 {
-                    batch.Draw(Game1.bg, new Vector2(i * Game1.cellWidth, j * Game1.cellHeight), Color.White);
+                    spriteRect.X = i * Game1.cellWidth;
+                    spriteRect.Y = j * Game1.cellHeight;
+                    batch.Draw(Game1.bg, spriteRect, Color.White);
                     if (locations[i][j] != null)
-                        locations[i][j].Draw(batch);
+                        locations[i][j].Draw(batch, spriteRect);
                 }
             }
             batch.End();

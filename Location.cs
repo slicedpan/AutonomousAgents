@@ -88,11 +88,11 @@ namespace FiniteStateMachine
             _texture = manager.Load<Texture2D>(_textureName);
         }
 
-        public virtual void Draw(SpriteBatch batch)
+        public virtual void Draw(SpriteBatch batch, Rectangle rect)
         {
             if (_textureName == "")
                 return;
-            batch.Draw(Texture, new Vector2(_X * Game1.cellWidth, _Y * Game1.cellHeight), Color.White);
+            batch.Draw(Texture, rect, Color.White);
         }
 
         public override string ToString()

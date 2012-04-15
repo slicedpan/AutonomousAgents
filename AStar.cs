@@ -62,27 +62,26 @@ namespace FiniteStateMachine
             IUIDGenerator<T> uidGenerator;
             BitArray memberShip;
 
-            float[] randomFloats = new float[128];
-            int randomNum = 0;
+            Random rand = new Random();
 
             public OpenSet(IUIDGenerator<T> uidGenerator)
             {               
                 this.uidGenerator = uidGenerator;
                 _list = new SortedList<float, AStarNode>();
                 memberShip = new BitArray(1024);
-                Random rand = new Random();
-                for (int i = 0; i < randomFloats.Length; ++i)
-                {
-                    randomFloats[i] = (float)(rand.NextDouble() * 0.05d);
-                }
             }
             public void Add(AStarNode node)
             {
-                _list.Add(node.FValue + randomFloats[randomNum++ % randomFloats.Length], node);
+                while (_list.ContainsKey(node.FValue))
+                    node.FValue *= 0.0001f;
+                _list.Add(node.FValue, node);                
+
                 int id = (int)uidGenerator.GenerateID(node.nodeValue);
-                if (id > memberShip.Count)
-                    memberShip.Length = id;
-                memberShip[(int)uidGenerator.GenerateID(node.nodeValue)] = true;
+                if (id >= memberShip.Length)
+                {
+                    memberShip.Length = id + 1;                    
+                }
+                memberShip[id] = true;
             }            
             public int Count
             {
@@ -105,11 +104,14 @@ namespace FiniteStateMachine
             }
             public bool Contains(AStarNode node)
             {
-                return memberShip[(int)uidGenerator.GenerateID(node.nodeValue)];
+                return Contains(node.nodeValue);
             }
             public bool Contains(T nodeValue)
             {
-                return memberShip[(int)uidGenerator.GenerateID(nodeValue)];
+                int id = (int)uidGenerator.GenerateID(nodeValue);
+                if (id >= memberShip.Length)
+                    return false;
+                return memberShip[id];
             }
             public AStarNode Find(T nodeValue)
             {
@@ -146,13 +148,15 @@ namespace FiniteStateMachine
             public void UpdateEntry(float FValue, AStarNode n)
             {
                 _list.Remove(FValue);
+                while (_list.ContainsKey(n.FValue))
+                    n.FValue += 0.0001f;
                 _list.Add(n.FValue, n);
             }
         }
 
         class ClosedSet
         {
-            SortedList<uint, AStarNode> _list = new SortedList<uint,AStarNode>();
+            BitArray memberShip = new BitArray(1024);
             IUIDGenerator<T> uidGenerator;
 
             public ClosedSet(IUIDGenerator<T> uidGenerator)
@@ -163,6 +167,14 @@ namespace FiniteStateMachine
             {
                 return Contains(node.nodeValue);
             }
+            public bool Contains(T nodeValue)
+            {
+                int id = (int)uidGenerator.GenerateID(nodeValue);
+                if (id >= memberShip.Length)
+                    return false;
+                return memberShip[id];
+            }
+            /*
             public bool Contains(T nodeValue)
             {
                 uint id = uidGenerator.GenerateID(nodeValue);
@@ -192,22 +204,17 @@ namespace FiniteStateMachine
                     }
                 }
             }
+            */
             public void Add(AStarNode node)
             {
-                _list.Add(uidGenerator.GenerateID(node.nodeValue), node);
+                int id = (int)uidGenerator.GenerateID(node.nodeValue);
+                if (id >= memberShip.Length)
+                    memberShip.Length = id + 128;   //magic number much
+                memberShip[(int)uidGenerator.GenerateID(node.nodeValue)] = true;
             }
             public void Clear()
             {
-                _list.Clear();                
-            }
-            public AStarNode Find(T nodeValue)
-            {
-                foreach (AStarNode node in _list.Values)
-                {
-                    if (node.nodeValue.Equals(nodeValue))
-                        return node;
-                }
-                return null;
+                memberShip.SetAll(false);                
             }
         }
 
@@ -226,7 +233,7 @@ namespace FiniteStateMachine
             this.heuristic = heuristic;
             this.movementCost = movementCost;
             open = new OpenSet(uidGenerator);
-            closed = new ClosedSet(uidGenerator);        
+            closed = new ClosedSet(uidGenerator);            
         }
 
         List<T> ReconstructPath(AStarNode node, T nodeValue)

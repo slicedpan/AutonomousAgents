@@ -16,16 +16,21 @@ namespace FiniteStateMachine
     public enum MessageType
     {
         HiHoneyImHome,
-        StewsReady
+        StewsReady,
+        Howdy,
+        KillMessage,
+        FightOver,
+        CorpseLocation
     }
 
     // Telegrams are the messages that are sent between agents -- don't create these yourself, just call DispatchMessage()
-    public struct Telegram
+    public class Telegram
     {
         public double DispatchTime;
         public int Sender;
         public int Receiver;
         public MessageType messageType;
+        public Object extraInfo = null;
 
         public Telegram(double dt, int s, int r, MessageType mt)
         {
@@ -33,7 +38,7 @@ namespace FiniteStateMachine
             Sender = s;
             Receiver = r;
             messageType = mt;
-        }
+        }        
     }
 
     // This static class encapsulates all the message-related functions in our game
@@ -43,12 +48,14 @@ namespace FiniteStateMachine
         public static GameTime gameTime;
 
         // This message is used by agents to dispatch messages to other agents -- use this from your own agents
-        public static void DispatchMessage(double delay, int sender, int receiver, MessageType messageType)
+        public static void DispatchMessage(double delay, int sender, int receiver, MessageType messageType, Object extra = null)
         {
             Agent sendingAgent = AgentManager.GetAgent(sender);
             Agent receivingAgent = AgentManager.GetAgent(receiver);
 
             Telegram telegram = new Telegram(0, sender, receiver, messageType);
+            if (extra != null)
+                telegram.extraInfo = extra;
             if (delay <= 0.0f)
             {
                 Printer.PrintMessageData("Instant telegram dispatched by " + sender + " for " + receiver + " message is " + MessageToString(messageType));

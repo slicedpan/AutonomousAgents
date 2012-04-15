@@ -13,7 +13,11 @@ namespace FiniteStateMachine
         public Sheriff(String name) : base(name)
         {
             textureName = "sheriff";
-            stateMachine = new StateMachine<Sheriff>(this);            
+            stateMachine = new StateMachine<Sheriff>(this);
+            stateMachine.CurrentState = new Patrolling();
+            stateMachine.GlobalState = new SheriffGlobalState();
+            location = Location.sheriffsOffice;
+            speed = 4.0f;
         }
         public StateMachine<Sheriff> StateMachine
         {
@@ -27,7 +31,27 @@ namespace FiniteStateMachine
 
         public override bool HandleMessage(Telegram telegram)
         {
-            return true;
+            return stateMachine.HandleMessage(telegram);
+        }
+
+        public override void OnSense(Agent other)
+        {
+            if (other is Outlaw)
+            {
+                stateMachine.ChangeState(new SheriffGunfight(other));
+            }
+            else
+            {
+                Printer.Print(this, "Howdy, " + other.Name);
+                Message.DispatchMessage(0.0d, Id, other.Id, MessageType.Howdy);
+            }
+        }
+        public override void OnUnsense(Agent other)
+        {
+            if (!(other is Outlaw))
+            {
+                Printer.Print(this, "So long, " + other.Name);
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ namespace FiniteStateMachine
     {
         private static int agents = 0;
         Texture2D _texture;
+        Rectangle spriteRect;
         // Every agent has a numerical id that is set when it is created
         private int id;
         protected double speed = 1.0d; //amount of cells that the agent can pass through in one second unhindered
@@ -24,6 +25,15 @@ namespace FiniteStateMachine
             get
             {
                 return speed;
+            }
+        }
+
+        private List<Agent> sensedAgents;
+        public List<Agent> SensedAgents
+        {
+            get
+            {
+                return sensedAgents;
             }
         }
 
@@ -45,6 +55,8 @@ namespace FiniteStateMachine
         {
             id = agents++;
             name = agentName;
+            spriteRect = new Rectangle(0, 0, Game1.cellWidth, Game1.cellHeight);
+            sensedAgents = new List<Agent>();
         }
 
         protected String textureName = "";
@@ -52,7 +64,11 @@ namespace FiniteStateMachine
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (textureName != "")
-                spriteBatch.Draw(_texture, new Vector2(location.X * Game1.cellWidth, location.Y * Game1.cellHeight), Color.White);
+            {
+                spriteRect.X = location.X * Game1.cellWidth;
+                spriteRect.Y = location.Y * Game1.cellHeight;
+                spriteBatch.Draw(_texture, spriteRect, Color.White);
+            }
         }
 
         public virtual void LoadContent(ContentManager contentManager)
@@ -70,8 +86,15 @@ namespace FiniteStateMachine
             }
             set
             {
+                Location lastLocation = location;
                 location = value;
+                UpdateLocation(lastLocation);
             }
+        }
+
+        void UpdateLocation(Location lastLocation)
+        {
+            AgentManager.UpdateLocation(this, location, lastLocation);
         }
 
         // Any agent must implement these methods
@@ -85,5 +108,16 @@ namespace FiniteStateMachine
 
         public Object _StateMachine { get { return _stateMachine; } }
         private Object _stateMachine;
+
+        public virtual void OnSense(Agent other)
+        {
+            
+        }
+
+        public virtual void OnUnsense(Agent other)
+        {
+
+        }
+
     }
 }

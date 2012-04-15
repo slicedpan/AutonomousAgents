@@ -11,19 +11,19 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace FiniteStateMachine
 {
-    abstract public class State<T>
+    public interface State<T>
     {
         // This will be executed when the state is entered
-        abstract public void Enter(T agent);
+        void Enter(T agent);
 
         // This is called by the Agent's update function each update step
-        abstract public void Execute(T agent, GameTime gameTime);
+        void Execute(T agent, GameTime gameTime);
 
         // This will be executed when the state is exited
-        abstract public void Exit(T agent);
+        void Exit(T agent);
 
         // This will be executed when the agent receives a message
-        abstract public bool OnMessage(T agent, Telegram telegram);
+        bool OnMessage(T agent, Telegram telegram);
     }
 
 
@@ -42,9 +42,9 @@ namespace FiniteStateMachine
             this.pathFinder = pathFinder;
             this.destinationState = destinationState;
         }
-        public override void Enter(T agent)
+        public virtual void Enter(T agent)
         {
-            Printer.Print(agent.Id, "Moving to " + destination.Description);
+            //Printer.Print(agent.Id, "Moving to " + destination.Description);
             if (destination == agent.Location)
             {
                 StateMachine<T> stateMachine = agent._StateMachine as StateMachine<T>;
@@ -60,7 +60,7 @@ namespace FiniteStateMachine
             gridTime = 0.0d;
         }
 
-        public override void Execute(T agent, GameTime gameTime)
+        public virtual void Execute(T agent, GameTime gameTime)
         {
             gridTime += gameTime.ElapsedGameTime.TotalSeconds;
             if (gridTime > (1.0d * agent.Location.TravelCost) / agent.Speed)
@@ -80,13 +80,13 @@ namespace FiniteStateMachine
             }
         }
 
-        public override void Exit(T agent)
+        public virtual void Exit(T agent)
         {
             Game1.pathDrawer.RemovePath(path);
-            Printer.Print(agent.Id, "Arrived at " + destination.Description);
+            //Printer.Print(agent.Id, "Arrived at " + destination.Description);
         }
 
-        public override bool OnMessage(T agent, Telegram telegram)
+        public virtual bool OnMessage(T agent, Telegram telegram)
         {
             return false;
         }

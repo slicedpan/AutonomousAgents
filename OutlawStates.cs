@@ -8,15 +8,14 @@ namespace FiniteStateMachine
 {
     class Lurking : State<Outlaw>
     {
-        public override void Enter(Outlaw agent)
+        public void Enter(Outlaw agent)
         {
 
         }
 
-        public override void Execute(Outlaw agent, GameTime gameTime)
+        public void Execute(Outlaw agent, GameTime gameTime)
         {
-            Printer.Print(agent.Id, "Just lurkin' at the " + agent.Location.ToString());
-            Printer.Print(agent.Id, String.Format("Coords {0}, {1}", agent.Location.X, agent.Location.Y));
+            Printer.Print(agent, "Just lurkin' at the " + agent.Location.ToString());
             agent.StateMachine.Sleep(new Random().Next(100) / 20.0d);
             Location nextDest = Location.cemetery;
             if (agent.Location == Location.cemetery)
@@ -24,115 +23,149 @@ namespace FiniteStateMachine
             agent.StateMachine.ChangeState(new Moving<Outlaw>(nextDest, PathFinderProvider.Get(), new Lurking()));            
         }
 
-        public override void Exit(Outlaw agent)
+        public void Exit(Outlaw agent)
         {
-            Printer.Print(agent.Id, "Leavin' the " + agent.Location.ToString());
+            Printer.Print(agent, "Leavin' the " + agent.Location.ToString());
         }
 
-        public override bool OnMessage(Outlaw agent, Telegram telegram)
+        public bool OnMessage(Outlaw agent, Telegram telegram)
         {
-            return true;
+            return false;
         }
     }
     class RobbingBank : State<Outlaw>
     {
 
-        public override void Enter(Outlaw agent)
+        public void Enter(Outlaw agent)
         {
-            Printer.Print(agent.Id, "Headin' over to the bank to steal some gold!");
+            Printer.Print(agent, "Headin' over to the bank to steal some gold!");
         }
 
-        public override void Execute(Outlaw agent, GameTime gameTime)
+        public void Execute(Outlaw agent, GameTime gameTime)
         {
             agent.StateMachine.Sleep(1.0d);
             agent.StateMachine.ChangeState(new Moving<Outlaw>(Location.outlawCamp, PathFinderProvider.Get(), new Lurking()));
         }
 
-        public override void Exit(Outlaw agent)
+        public void Exit(Outlaw agent)
         {
             int goldStolen = new Random().Next(10) + 1;
             agent.Money += goldStolen;
-            Printer.Print(agent.Id, "Stole " + goldStolen + " gold from the bank! I now have " + agent.Money + " gold");
-            Printer.Print(agent.Id, "Leaving the bank");
+            Printer.Print(agent, "Stole " + goldStolen + " gold from the bank! I now have " + agent.Money + " gold");
         }
 
-        public override bool OnMessage(Outlaw agent, Telegram telegram)
+        public bool OnMessage(Outlaw agent, Telegram telegram)
         {
-            return true;
+            return false;    
         }
     }
 
     class Resurrect : State<Outlaw>
     {
 
-        public override void Enter(Outlaw agent)
+        public void Enter(Outlaw agent)
         {
-            Printer.Print(agent.Id, "Resurrecting");
+            Printer.Print(agent, "Resurrecting");
         }
 
-        public override void Execute(Outlaw agent, GameTime gameTime)
+        public void Execute(Outlaw agent, GameTime gameTime)
         {
             agent.Location = Location.outlawCamp;
+            agent.Money = 0;
             agent.StateMachine.ChangeState(new Lurking());            
         }
 
-        public override void Exit(Outlaw agent)
+        public void Exit(Outlaw agent)
         {
             
         }
 
-        public override bool OnMessage(Outlaw agent, Telegram telegram)
+        public bool OnMessage(Outlaw agent, Telegram telegram)
         {
-            return false;
+            return true;
         }
     }
 
-    class DeadState : State<Outlaw>
+    class OutlawDead: State<Outlaw>
     {
-        public override void Enter(Outlaw agent)
+        public void Enter(Outlaw agent)
         {
         }
 
-        public override void Execute(Outlaw agent, GameTime gameTime)
+        public void Execute(Outlaw agent, GameTime gameTime)
         {
             agent.StateMachine.Sleep(20.0d);                        
             agent.StateMachine.ChangeState(new Resurrect());
         }
 
-        public override void Exit(Outlaw agent)
+        public void Exit(Outlaw agent)
         {
 
         }
 
-        public override bool OnMessage(Outlaw agent, Telegram telegram)
+        public bool OnMessage(Outlaw agent, Telegram telegram)
         {
-            return false;
+            return true;
         }
     }
 
     class OutlawGlobalState : State<Outlaw>
     {
-        public override void Enter(Outlaw agent)
+        public void Enter(Outlaw agent)
         {
         }
 
-        public override void Execute(Outlaw agent, GameTime gameTime)
+        public void Execute(Outlaw agent, GameTime gameTime)
         {
             agent.StateMachine.GlobalSleep(1.0d);
-            if (new Random().Next(30) == 0 && !agent.StateMachine.IsInState(new RobbingBank()))
+            if (new Random().Next(60) == 0 && !agent.StateMachine.IsInState(new RobbingBank()))
             {
                 agent.StateMachine.ChangeState(new Moving<Outlaw>(Location.bank, PathFinderProvider.Get(), new RobbingBank()));
             }
         }
 
-        public override void Exit(Outlaw agent)
+        public void Exit(Outlaw agent)
         {
 
         }
 
-        public override bool OnMessage(Outlaw agent, Telegram telegram)
+        public bool OnMessage(Outlaw agent, Telegram telegram)
         {
-            return false;
+            if (telegram.messageType == MessageType.KillMessage)
+                agent.StateMachine.ChangeState(new OutlawDead());
+            return true;
+        }
+    }
+
+    class OutlawGunfight : State<Outlaw>
+    {
+
+        public void Enter(Outlaw agent)
+        {
+        }
+
+        public void Execute(Outlaw agent, GameTime gameTime)
+        {
+        }
+
+        public void Exit(Outlaw agent)
+        {
+        }
+
+        public bool OnMessage(Outlaw agent, Telegram telegram)
+        {
+            switch (telegram.messageType)
+            {
+                case MessageType.KillMessage:
+                    agent.StateMachine.ChangeState(new OutlawDead());
+                    return true; 
+                case MessageType.FightOver:
+                    agent.StateMachine.ChangeState(new Lurking());
+                    Printer.Print(agent, "Take that Sheriff!");
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

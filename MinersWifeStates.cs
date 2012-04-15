@@ -10,23 +10,24 @@ namespace FiniteStateMachine
     {
         static Random rand = new Random();
 
-        public override void Enter(MinersWife minersWife)
+        public void Enter(MinersWife minersWife)
         {
-            Printer.Print(minersWife.Id, "Time to do some more housework!");
+            Printer.Print(minersWife, "Time to do some more housework!");
+            minersWife.StateMachine.Sleep(0.5d);
         }
 
-        public override void Execute(MinersWife minersWife, GameTime gameTime)
+        public void Execute(MinersWife minersWife, GameTime gameTime)
         {
             switch (rand.Next(3))
             {
                 case 0:
-                    Printer.Print(minersWife.Id, "Moppin' the floor");
+                    Printer.Print(minersWife, "Moppin' the floor");
                     break;
                 case 1:
-                    Printer.Print(minersWife.Id, "Washin' the dishes");
+                    Printer.Print(minersWife, "Washin' the dishes");
                     break;
                 case 2:
-                    Printer.Print(minersWife.Id, "Makin' the bed");
+                    Printer.Print(minersWife, "Makin' the bed");
                     break;
                 default:
                     break;
@@ -35,12 +36,12 @@ namespace FiniteStateMachine
 
         }
 
-        public override void Exit(MinersWife minersWife)
+        public void Exit(MinersWife minersWife)
         {
 
         }
 
-        public override bool OnMessage(MinersWife minersWife, Telegram telegram)
+        public bool OnMessage(MinersWife minersWife, Telegram telegram)
         {
             return false;
         }
@@ -49,24 +50,24 @@ namespace FiniteStateMachine
     // In this state, the MinersWife agent goes to the loo
     public class VisitBathroom : State<MinersWife>
     {
-        public override void Enter(MinersWife minersWife)
+        public void Enter(MinersWife minersWife)
         {
-            Printer.Print(minersWife.Id, "Walkin' to the can. Need to powda mah pretty li'lle nose");
+            Printer.Print(minersWife, "Walkin' to the can. Need to powda mah pretty li'lle nose");
         }
 
-        public override void Execute(MinersWife minersWife, GameTime gameTime)
+        public void Execute(MinersWife minersWife, GameTime gameTime)
         {
-            Printer.Print(minersWife.Id, "Ahhhhhh! Sweet relief!");
+            Printer.Print(minersWife, "Ahhhhhh! Sweet relief!");
             minersWife.StateMachine.Sleep(4.0d);
             minersWife.StateMachine.RevertToPreviousState();  // this completes the state blip
         }
 
-        public override void Exit(MinersWife minersWife)
+        public void Exit(MinersWife minersWife)
         {
-            Printer.Print(minersWife.Id, "Leavin' the Jon");
+            Printer.Print(minersWife, "Leavin' the Jon");
         }
 
-        public override bool OnMessage(MinersWife minersWife, Telegram telegram)
+        public bool OnMessage(MinersWife minersWife, Telegram telegram)
         {
             return false;
         }
@@ -75,29 +76,29 @@ namespace FiniteStateMachine
     // In this state, the MinersWife prepares food
     public class CookStew : State<MinersWife>
     {
-        public override void Enter(MinersWife minersWife)
+        public void Enter(MinersWife minersWife)
         {
             if (!minersWife.Cooking)
             {
                 // MinersWife sends a delayed message to herself to arrive when the food is ready
-                Printer.Print(minersWife.Id, "Putting the stew in the oven");
-                Message.DispatchMessage(2, minersWife.Id, minersWife.Id, MessageType.StewsReady);
+                Printer.Print(minersWife, "Putting the stew in the oven");
+                Message.DispatchMessage(4.0d, minersWife.Id, minersWife.Id, MessageType.StewsReady);
                 minersWife.Cooking = true;
             }
         }
 
-        public override void Execute(MinersWife minersWife, GameTime gameTime)
+        public void Execute(MinersWife minersWife, GameTime gameTime)
         {
-            Printer.Print(minersWife.Id, "Fussin' over food");
+            Printer.Print(minersWife, "Fussin' over food");
             minersWife.StateMachine.Sleep(4.0d);
         }
 
-        public override void Exit(MinersWife minersWife)
+        public void Exit(MinersWife minersWife)
         {
-            Printer.Print(minersWife.Id, "Puttin' the stew on the table");
+            Printer.Print(minersWife, "Puttin' the stew on the table");
         }
 
-        public override bool OnMessage(MinersWife minersWife, Telegram telegram)
+        public bool OnMessage(MinersWife minersWife, Telegram telegram)
         {
             switch (telegram.messageType)
             {
@@ -106,8 +107,8 @@ namespace FiniteStateMachine
                     return false;
                 case MessageType.StewsReady:
                     // Tell Miner that the stew is ready now by sending a message with no delay
-                    Printer.PrintMessageData("Message handled by " + minersWife.Id + " at time ");
-                    Printer.Print(minersWife.Id, "StewReady! Lets eat");
+                    Printer.PrintMessageData("Message handled by " + minersWife + " at time ");
+                    Printer.Print(minersWife, "StewReady! Lets eat");
                     Message.DispatchMessage(0, minersWife.Id, minersWife.Husband.Id, MessageType.StewsReady);
                     minersWife.Cooking = false;
                     minersWife.StateMachine.ChangeState(new DoHouseWork());
@@ -123,12 +124,12 @@ namespace FiniteStateMachine
     {
         static Random rand = new Random();
 
-        public override void Enter(MinersWife minersWife)
+        public void Enter(MinersWife minersWife)
         {
            
         }
 
-        public override void Execute(MinersWife minersWife, GameTime gameTime)
+        public void Execute(MinersWife minersWife, GameTime gameTime)
         {
             // There's always a 10% chance of a state blip in which MinersWife goes to the bathroom
             if (rand.Next(10) == 1 && !minersWife.StateMachine.IsInState(new VisitBathroom()))
@@ -138,22 +139,24 @@ namespace FiniteStateMachine
             minersWife.StateMachine.GlobalSleep(2.0d);
         }
 
-        public override void Exit(MinersWife minersWife)
+        public void Exit(MinersWife minersWife)
         {
 
         }
 
-        public override bool OnMessage(MinersWife minersWife, Telegram telegram)
+        public bool OnMessage(MinersWife minersWife, Telegram telegram)
         {
             switch (telegram.messageType)
             {
                 case MessageType.HiHoneyImHome:
-                    Printer.PrintMessageData("Message handled by " + minersWife.Id + " at time ");
-                    Printer.Print(minersWife.Id, "Hi honey. Let me make you some of mah fine country stew");
+                    Printer.Print(minersWife, "Hi honey. Let me make you some of mah fine country stew");
                     minersWife.StateMachine.ChangeState(new CookStew());
                     return true;
                 case MessageType.StewsReady:
                     return false;
+                case MessageType.Howdy:
+                    Printer.Print(minersWife, "Howdy Sheriff!");
+                    return true;
                 default:
                     return false;
             }                 

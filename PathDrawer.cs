@@ -18,9 +18,7 @@ namespace FiniteStateMachine
     }
     public class PathDrawer
     {        
-        List<Color> pathColours;
         List<PathEntry> paths;
-        int nextColour = 0;
 
         Texture2D horizontal, vertical, cwcorner, ccwcorner;
 
@@ -29,22 +27,18 @@ namespace FiniteStateMachine
             return new Rectangle(location.X * Game1.cellWidth, location.Y * Game1.cellHeight, Game1.cellWidth, Game1.cellHeight);
         }
 
+        Random rand = new Random();
+
         public PathDrawer()
         {
-            pathColours = new List<Color>();
             paths = new List<PathEntry>();
-            pathColours.Add(Color.Blue);
-            pathColours.Add(Color.BlueViolet);
-            pathColours.Add(Color.YellowGreen);
-            pathColours.Add(Color.Sienna);
-            pathColours.Add(Color.Beige);
         }
         public void AddPath(List<Location> path)
         {
             PathEntry p = new PathEntry()
             {
                 path = path,
-                pathColour = pathColours[nextColour++ % pathColours.Count]
+                pathColour = new Color(rand.Next(255), rand.Next(255), rand.Next(255))
             };
             CreatePaths(p);
             paths.Add(p);

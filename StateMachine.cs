@@ -83,7 +83,8 @@ namespace FiniteStateMachine
                 if (changingState)
                 {
                     changingState = false;
-                    previousState = currentState;
+                    if (!(currentState is Moving<T>))   //let's not remember moving states
+                        previousState = currentState;
                     currentState.Exit(owner);
                     currentState = nextState;
                     currentState.Enter(owner);

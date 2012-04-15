@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FiniteStateMachine
 {
@@ -14,6 +15,8 @@ namespace FiniteStateMachine
             get { return money; }
             set { money = value; }
         }
+
+        public bool Alive = true;
 
         public Outlaw(String name) : base(name)
         {
@@ -36,9 +39,24 @@ namespace FiniteStateMachine
  
         }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (Alive)
+                base.Draw(spriteBatch);
+        }
+
         public override bool HandleMessage(Telegram telegram)
         {
             return stateMachine.HandleMessage(telegram);
+        }
+
+        public override void OnSense(Agent other)
+        {
+            if (other is Sheriff)
+            {
+                Printer.Print(this, "You'll never take me alive, Sheriff!");
+                stateMachine.ChangeState(new OutlawGunfight());
+            }
         }
     }
 }

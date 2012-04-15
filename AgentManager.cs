@@ -7,6 +7,22 @@ using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
+
+    public class LocationComparer : IComparer<Location>
+    {
+        public int Compare(Location x, Location y)
+        {
+ 	        if (x == y)
+                return 0;
+            int xID = x.Y * Game1.numCellsX + x.X;
+            int yID = y.Y * Game1.numCellsX + y.X;
+            if (xID > yID)
+                return 1;
+            else
+                return -1;
+        }
+    }
+
     public static class AgentManager
     {
         static SortedDictionary<String, Agent> agents = new SortedDictionary<string,Agent>();
@@ -77,6 +93,8 @@ namespace FiniteStateMachine
             }
         }
 
+        static bool sensingRequiresUpdate = false;
+
         public static void Update(GameTime gameTime)
         {
             foreach (Agent agent in agents.Values)
@@ -87,6 +105,51 @@ namespace FiniteStateMachine
             {
                 callback.Invoke(gameTime);
             }
+            if (sensingRequiresUpdate)
+            {
+                UpdateSensing();
+                sensingRequiresUpdate = false;
+            }
         }
+
+        static bool CanSense(Agent agent, Agent other)
+        {
+            return agent.Location == other.Location;
+        }
+
+        public static void UpdateSensing()
+        {
+            foreach (Agent agent in agents.Values)
+            {
+                foreach (Agent other in agents.Values)
+                {
+                    if (agent == other)
+                        continue;
+                    bool canSense = CanSense(agent, other);
+                    if (canSense)
+                    {
+                        if (!agent.SensedAgents.Contains(other))
+                        {
+                            agent.SensedAgents.Add(other);
+                            agent.OnSense(other);
+                        }
+                    }
+                    else
+                    {
+                        if (agent.SensedAgents.Contains(other))
+                        {
+                            agent.SensedAgents.Remove(other);
+                            agent.OnUnsense(other);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void UpdateLocation(Agent agent, Location location, Location lastLocation)
+        {
+            sensingRequiresUpdate = true;
+        }
+
     }
 }
