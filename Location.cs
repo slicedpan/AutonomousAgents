@@ -40,6 +40,10 @@ namespace FiniteStateMachine
             {
                 return sightAttenuation;
             }
+            set
+            {
+                sightAttenuation = value;
+            }
         }
 
         private int _X, _Y;

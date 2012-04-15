@@ -39,9 +39,10 @@ namespace FiniteStateMachine
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             grid = new LocationGrid(numCellsX, numCellsY);
-            grid.AddRandomLocation("mountain", "mountain", 15, 0.2d);
+            grid.AddRandomLocation("mountain", "mountain", 15, 0.2d, 15);
             grid.AddRandomLocation("plain", "", 1, 1.3d);
             grid.AddRandomLocation("water", "water", 4, 0.3d);
+            grid.AddRandomLocation("tree", "tree", 2, 0.35d, 5);
             grid.Populate();
   
         }

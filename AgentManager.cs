@@ -12,7 +12,7 @@ namespace FiniteStateMachine
     {    
         public float GetMovementCost(Location first, Location second)
         {
- 	        throw new NotImplementedException();
+ 	        return 0.0f;
         }
     }
 
@@ -120,11 +120,17 @@ namespace FiniteStateMachine
             }
         }
 
-        static IPathFinder<Location> sightPropagator = new AStar<Location>(
+        static IPathFinder<Location> sightPropagator = new AStar<Location>(new LocationEuclideanHeuristic(), new LocationSightCost(), new LocationIDGen());
 
         static bool CanSense(Agent agent, Agent other)
         {
-            return agent.Location == other.Location;
+            List<Location> path = sightPropagator.GetPath(agent.Location, other.Location, Game1.grid);
+            int pathLength = 0;
+            foreach (Location l in path)
+            {
+                pathLength += l.SightAttenuation;
+            }
+            return pathLength <= agent.SightRange;
         }
 
         public static void UpdateSensing()

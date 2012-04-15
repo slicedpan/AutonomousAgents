@@ -7,15 +7,19 @@ using Microsoft.Xna.Framework;
 
 namespace FiniteStateMachine
 {
-    public class RandomLocation
-    {
-        public String name = "";
-        public String texture = "";
-        public int travelCost = 0;
-        public double frequency = 0.0d;
-    }
+    
     public class LocationGrid : IGraph<Location>
     {
+
+        class RandomLocation
+        {
+            public String name = "";
+            public String texture = "";
+            public int travelCost = 0;
+            public double frequency = 0.0d;
+            public int sightAttenuation;
+        }
+
         private Dictionary<String, Location> namedLocations = new Dictionary<string,Location>();
 
         private static LocationGrid currentInstance;
@@ -38,18 +42,20 @@ namespace FiniteStateMachine
         {
             Location location = new Location(name, texture);
             location.TravelCost = 1;
+            location.SightAttenuation = 1;
             namedLocations.Add(name, location);
             AddLocation(location);
             return location;
         }
 
-        public void AddRandomLocation(String name, String texture, int travelCost, double frequency)
+        public void AddRandomLocation(String name, String texture, int travelCost, double frequency, int sightAttenuation = 1)
         {
             RandomLocation r = new RandomLocation();
             r.name = name;
             r.texture = texture;
             r.travelCost = travelCost;
             r.frequency = frequency;
+            r.sightAttenuation = sightAttenuation;
             randomLocations.Add(name, r);
         }
 
@@ -109,6 +115,7 @@ namespace FiniteStateMachine
             }
             retLoc = new Location(chosenLocation.name, chosenLocation.texture);
             retLoc.TravelCost = chosenLocation.travelCost;
+            retLoc.SightAttenuation = chosenLocation.sightAttenuation;
             return retLoc;
         }
 

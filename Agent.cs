@@ -20,6 +20,15 @@ namespace FiniteStateMachine
         private int id;
         protected double speed = 1.0d; //amount of cells that the agent can pass through in one second unhindered
 
+        protected int sightRange = 8;
+        public int SightRange
+        {
+            get
+            {
+                return sightRange;
+            }
+        }
+
         public double Speed
         {
             get
